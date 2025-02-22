@@ -294,6 +294,7 @@ export default function App() {
         }
 
         .brute-force-item {
+          color: var(--text-color);
           padding: 0.75rem;
           background: var(--surface-color);
           border-radius: var(--radius);
