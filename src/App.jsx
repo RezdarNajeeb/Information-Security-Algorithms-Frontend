@@ -277,6 +277,7 @@ export default function App() {
         }
 
         .result-content {
+          color: var(--text-color);
           white-space: pre-wrap;
           word-break: break-word;
           font-family: monospace;
