@@ -327,10 +327,14 @@ export default function App() {
           .key-section {
             flex-direction: column;
           }
+          
+          .input-group, .key-section button {
+            width: 100%;
+          }
         }
       `}</style>
 
-            <h1 className="title">Encryption App</h1>
+            <h1 className="title">Information Security Algorithms</h1>
 
             <div className="content">
                 <div className="tabs">
