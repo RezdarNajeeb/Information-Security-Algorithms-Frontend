@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://cool-georgeanna-isakoya-c6ce14a1.koyeb.app/';
 
 const TabButton = ({active, onClick, children}) => (
     <button
