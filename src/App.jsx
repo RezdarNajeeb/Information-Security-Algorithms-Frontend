@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import './App.css';
 
 const API_BASE_URL = 'https://cool-georgeanna-isakoya-c6ce14a1.koyeb.app';
 
@@ -184,10 +183,17 @@ export default function App() {
   return (
     <div className="app">
       <div className="header">
-        <h1 className="title">Crypto Lab</h1>
-        <button className="theme-toggle" onClick={toggleTheme}>
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
+        <h1 className="title">Information Security Lab</h1>
+        <label className="theme-switch">
+          <input
+            type="checkbox"
+            checked={theme === 'dark'}
+            onChange={toggleTheme}
+          />
+          <span className="slider">
+            <i className={`fas ${theme === 'light' ? 'fa-sun' : 'fa-moon'}`}></i>
+          </span>
+        </label>
       </div>
 
       <div className="main-card">
@@ -217,11 +223,11 @@ export default function App() {
         <div className="input-section">
           <div className="input-group">
             <label>Text to Encrypt/Decrypt</label>
-            <textarea
+            <input
+              type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={activeTab === 'des' ? 'Enter exactly 8 characters' : 'Enter your text here...'}
-              rows="4"
             />
             {activeTab === 'des' && (
               <span className="input-help">
@@ -245,28 +251,29 @@ export default function App() {
               </span>
             </div>
           ) : (
-            <div className="key-section">
-              <div className="input-group flex-grow">
-                <label>Encryption Key</label>
+            <div className="input-group">
+              <label>Encryption Key</label>
+              <div className="key-section">
                 <input
                   type="text"
                   value={key}
                   onChange={(e) => setKey(e.target.value)}
                   placeholder={activeTab === 'des' ? 'Enter 64-bit key or generate one' : 'Enter key or generate one'}
+                  className="flex-grow"
                 />
-                {activeTab === 'des' && (
-                  <span className="input-help">
-                    DES key must be 64 bits (0s and 1s). Current: {key.length} bits
-                  </span>
-                )}
+                <button
+                  onClick={generateKey}
+                  disabled={loading}
+                  className="secondary-button"
+                >
+                  <i className="fas fa-key"></i> Generate Key
+                </button>
               </div>
-              <button
-                onClick={generateKey}
-                disabled={loading}
-                className="secondary-button"
-              >
-                Generate Key
-              </button>
+              {activeTab === 'des' && (
+                <span className="input-help">
+                  DES key must be 64 bits (0s and 1s). Current: {key.length} bits
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -277,14 +284,14 @@ export default function App() {
             disabled={loading || !text}
             className="primary-button"
           >
-            🔒 Encrypt
+            <i className="fas fa-lock"></i> Encrypt
           </button>
           <button
             onClick={() => handleOperation('decrypt')}
             disabled={loading || !text || (activeTab === 'des' && !key)}
             className="primary-button"
           >
-            🔓 Decrypt
+            <i className="fas fa-lock-open"></i> Decrypt
           </button>
           {activeTab === 'caesar' && (
             <button
@@ -292,7 +299,7 @@ export default function App() {
               disabled={loading || !text}
               className="secondary-button"
             >
-              🔍 Brute Force
+              <i className="fas fa-search"></i> Brute Force
             </button>
           )}
         </div>
@@ -349,6 +356,530 @@ export default function App() {
           </p>
         </div>
       </div>
+
+      <footer className="footer">
+        <div className="team-section">
+          <h3>Team Members</h3>
+          <div className="team-grid">
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Rezdar Najeeb</span>
+            </div>
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Hawkar Shakhawan</span>
+            </div>
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Karwan Yousif</span>
+            </div>
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Ayar Nasim</span>
+            </div>
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Muhammad Kamal</span>
+            </div>
+            <div className="team-member">
+              <i className="fas fa-user-graduate"></i>
+              <span>Muhammad Hoshyar</span>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© 2025 Cryptography Laboratory - Information Security Project</p>
+        </div>
+      </footer>
+
+      <style jsx>{`
+        :root {
+          --primary-color: #2563eb;
+          --primary-hover: #1d4ed8;
+          --background-color: #f8fafc;
+          --surface-color: #ffffff;
+          --border-color: #e2e8f0;
+          --text-color: #1e293b;
+          --text-secondary: #64748b;
+          --error-color: #ef4444;
+          --error-bg: #fee2e2;
+          --success-color: #22c55e;
+          --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+          --radius: 12px;
+          --transition: all 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+          --primary-color: #3b82f6;
+          --primary-hover: #60a5fa;
+          --background-color: #0f172a;
+          --surface-color: #1e293b;
+          --border-color: #334155;
+          --text-color: #f8fafc;
+          --text-secondary: #94a3b8;
+          --error-color: #f87171;
+          --error-bg: #7f1d1d;
+          --success-color: #4ade80;
+          --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+        }
+
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+
+        body {
+          background: var(--background-color);
+          color: var(--text-color);
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          min-height: 100vh;
+          transition: var(--transition);
+        }
+
+        .app {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 2rem;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 3rem;
+        }
+
+        .title {
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .theme-switch {
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+        }
+
+        .theme-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: var(--surface-color);
+          border: 2px solid var(--border-color);
+          transition: var(--transition);
+          border-radius: 34px;
+          display: flex;
+          align-items: center;
+          padding: 0 6px;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 24px;
+          width: 24px;
+          left: 4px;
+          bottom: 3px;
+          background-color: var(--primary-color);
+          transition: var(--transition);
+          border-radius: 50%;
+        }
+
+        .theme-switch input:checked + .slider:before {
+          transform: translateX(26px);
+        }
+
+        .slider i {
+          font-size: 16px;
+          color: var(--text-secondary);
+          position: absolute;
+          transition: var(--transition);
+        }
+
+        .theme-switch input:not(:checked) + .slider i {
+          left: 10px;
+        }
+
+        .theme-switch input:checked + .slider i {
+          right: 10px;
+        }
+
+        .main-card {
+          background: var(--surface-color);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          padding: 2rem;
+          transition: var(--transition);
+          flex: 1;
+        }
+
+        .tabs {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          border-bottom: 1px solid var(--border-color);
+          padding-bottom: 1rem;
+        }
+
+        .tab-button {
+          padding: 0.75rem 1.5rem;
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-size: 1rem;
+          font-weight: 500;
+          color: var(--text-secondary);
+          border-radius: var(--radius);
+          transition: var(--transition);
+          position: relative;
+        }
+
+        .tab-button:hover {
+          background: var(--background-color);
+          color: var(--text-color);
+        }
+
+        .tab-button.active {
+          color: var(--primary-color);
+        }
+
+        .tab-button.active::after {
+          content: '';
+          position: absolute;
+          bottom: -17px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: var(--primary-color);
+          border-radius: 2px;
+        }
+
+        .input-section {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .input-group label {
+          font-weight: 500;
+          color: var(--text-color);
+        }
+
+        .input-help {
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+        }
+
+        input {
+          padding: 0.75rem;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius);
+          font-size: 1rem;
+          font-family: inherit;
+          background: var(--background-color);
+          color: var(--text-color);
+          transition: var(--transition);
+        }
+
+        input:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        .key-section {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+        }
+
+        .flex-grow {
+          flex-grow: 1;
+        }
+
+        .button-group {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+        }
+
+        button {
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: var(--radius);
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: var(--transition);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .primary-button {
+          background: var(--primary-color);
+          color: white;
+        }
+
+        .primary-button:hover {
+          background: var(--primary-hover);
+        }
+
+        .secondary-button {
+          background: var(--background-color);
+          color: var(--text-color);
+          border: 1px solid var(--border-color);
+        }
+
+        .secondary-button:hover {
+          background: var(--border-color);
+        }
+
+        button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .loading {
+          text-align: center;
+          color: var(--text-secondary);
+          margin: 1rem 0;
+          font-style: italic;
+        }
+
+        .result-container {
+          background: var(--background-color);
+          padding: 1.5rem;
+          border-radius: var(--radius);
+          margin-top: 1rem;
+          border: 1px solid var(--border-color);
+        }
+
+        .result-container h3 {
+          margin: 0 0 1rem 0;
+          color: var(--text-color);
+          font-size: 1.1rem;
+        }
+
+        .result-content {
+          color: var(--text-color);
+          white-space: pre-wrap;
+          word-break: break-word;
+          font-family: 'Courier New', monospace;
+          background: var(--surface-color);
+          padding: 1rem;
+          border-radius: calc(var(--radius) - 4px);
+          border: 1px solid var(--border-color);
+          font-size: 0.95rem;
+          line-height: 1.5;
+        }
+
+        .result-content.binary {
+          font-family: monospace;
+          font-size: 0.9rem;
+          word-break: break-all;
+        }
+
+        .brute-force-results {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .brute-force-item {
+          color: var(--text-color);
+          padding: 0.75rem;
+          background: var(--surface-color);
+          border-radius: calc(var(--radius) - 4px);
+          border: 1px solid var(--border-color);
+          font-family: 'Courier New', monospace;
+        }
+
+        .error {
+          background: var(--error-bg);
+          color: var(--error-color);
+          padding: 1rem;
+          border-radius: var(--radius);
+          margin-bottom: 1rem;
+          border: 1px solid var(--error-color);
+        }
+
+        .info-card {
+          background: var(--background-color);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius);
+          padding: 1rem;
+          margin-top: 2rem;
+        }
+
+        .info-card h4 {
+          color: var(--text-color);
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+
+        .footer {
+          margin-top: 4rem;
+          background: var(--surface-color);
+          border-top: 1px solid var(--border-color);
+          padding: 2rem 0;
+        }
+
+        .team-section {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .team-section h3 {
+          color: var(--text-color);
+          margin-bottom: 1.5rem;
+          font-size: 1.5rem;
+        }
+
+        .team-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 0 2rem;
+        }
+
+        .team-member {
+          background: var(--background-color);
+          padding: 1rem;
+          border-radius: var(--radius);
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          border: 1px solid var(--border-color);
+          transition: var(--transition);
+        }
+
+        .team-member:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow);
+        }
+
+        .team-member i {
+          font-size: 1.25rem;
+          color: var(--primary-color);
+        }
+
+        .team-member span {
+          color: var(--text-color);
+          font-weight: 500;
+        }
+
+        .footer-bottom {
+          text-align: center;
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 640px) {
+          .app {
+            padding: 1rem;
+          }
+
+          .header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+
+          .title {
+            font-size: 1.75rem;
+          }
+
+          .main-card {
+            padding: 1.5rem;
+          }
+
+          .tabs {
+            flex-wrap: wrap;
+          }
+
+          .tab-button {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+          }
+
+          .button-group {
+            flex-direction: column;
+          }
+
+          .key-section {
+            flex-direction: column;
+          }
+
+          .input-group {
+            width: 100%;
+          }
+          
+          .key-section {
+            flex-direction: column;
+          }
+          
+          .key-section input,
+          .key-section button {
+            width: 100%;
+          }
+
+          .team-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .result-container {
+          animation: fadeIn 0.3s ease;
+        }
+      `}</style>
     </div>
   );
 }
