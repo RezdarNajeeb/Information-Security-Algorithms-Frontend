@@ -242,12 +242,12 @@ export default function App() {
                     >
                         Monoalphabetic
                     </TabButton>
-                    <TabButton
-                        active={activeTab === 'des'}
-                        onClick={() => handleTabChange('des')}
-                    >
-                        DES Encryption
-                    </TabButton>
+                    {/*<TabButton*/}
+                    {/*    active={activeTab === 'des'}*/}
+                    {/*    onClick={() => handleTabChange('des')}*/}
+                    {/*>*/}
+                    {/*    DES Encryption*/}
+                    {/*</TabButton>*/}
                 </div>
 
                 {error && <div className="error">{error}</div>}
