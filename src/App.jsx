@@ -3,6 +3,13 @@ import './App.css';
 
 const API_BASE_URL = 'https://cool-georgeanna-isakoya-c6ce14a1.koyeb.app';
 
+// Fixed seed for key generation (client-side fallback)
+const generateFixedKey = () => {
+    // This is just a fallback in case the API is unavailable
+    // The real consistent generation happens on the backend
+    return '1010101010101010101010101010101010101010101010101010101010101010';
+};
+
 const TabButton = ({active, onClick, children}) => (
     <button
         className={`tab-button ${active ? 'active' : ''}`}
@@ -118,6 +125,8 @@ export default function App() {
                     binary: response.binary_ciphertext,
                     key: response.key
                 });
+                // Save the key for decryption
+                setKey(response.key);
             } else {
                 setResult({
                     text: response.decrypted_text,
@@ -145,7 +154,12 @@ export default function App() {
             const response = await apiRequest(endpoint);
             setKey(response.key);
         } catch (error) {
-            console.error('Key generation failed:', error);
+            // Fallback to client-side generation if API fails
+            if (activeTab === 'des') {
+                setKey(generateFixedKey());
+            } else {
+                console.error('Key generation failed:', error);
+            }
         }
     };
 
@@ -166,9 +180,11 @@ export default function App() {
                 return false;
             }
         }
-        if (activeTab === 'des' && key && key.length !== 64) {
-            setError('DES key must be exactly 64 bits.');
-            return false;
+        if (activeTab === 'des' && key) {
+            if (key.length !== 64 || !/^[01]+$/.test(key)) {
+                setError('DES key must be exactly 64 bits (0s and 1s only).');
+                return false;
+            }
         }
         return true;
     };
@@ -187,6 +203,12 @@ export default function App() {
                 handleDESOperation(operation);
                 break;
         }
+    };
+
+    // Helper function to generate a random 64-bit binary string for user input
+    const generateRandomBinaryInput = () => {
+        const bits = Array.from({length: 64}, () => Math.round(Math.random())).join('');
+        setText(bits);
     };
 
     return (
@@ -233,12 +255,32 @@ export default function App() {
                 <div className="input-section">
                     <div className="input-group">
                         <label>Text to Encrypt/Decrypt</label>
-                        <input
-                            type="text"
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                            placeholder={activeTab === 'des' ? "Enter exactly 64 binary bits (0s and 1s only)" : "Enter text to encrypt/decrypt"}
-                        />
+                        {activeTab === 'des' ? (
+                            <div className="key-section">
+                                <input
+                                    type="text"
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    placeholder="Enter exactly 64 binary bits (0s and 1s only)"
+                                    className="flex-grow"
+                                />
+                                <button
+                                    onClick={generateRandomBinaryInput}
+                                    disabled={loading}
+                                    className="secondary-button"
+                                >
+                                    <i className="fas fa-dice" style={{color: 'var(--primary-color)'}}></i> Generate
+                                    Random Input
+                                </button>
+                            </div>
+                        ) : (
+                            <input
+                                type="text"
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                                placeholder={activeTab === 'des' ? "Enter exactly 64 binary bits (0s and 1s only)" : "Enter text to encrypt/decrypt"}
+                            />
+                        )}
                         {activeTab === 'des' && (
                             <span className="input-help">
                                 DES requires exactly 64 binary bits (0s and 1s only). Current: {text.length} bits
@@ -283,6 +325,7 @@ export default function App() {
                             {activeTab === 'des' && (
                                 <span className="input-help">
                   DES key must be 64 bits (0s and 1s). Current: {key.length} bits
+                                    {key.length === 64 && /^[01]+$/.test(key) ? ' (valid)' : ''}
                 </span>
                             )}
                             {activeTab === 'mono' && (
@@ -368,7 +411,7 @@ export default function App() {
                         {activeTab === 'mono' &&
                             'Monoalphabetic cipher uses a fixed substitution alphabet where each letter is mapped to another letter. Unlike Caesar cipher, the mapping is not based on a simple shift.'}
                         {activeTab === 'des' &&
-                            'Data Encryption Standard (DES) is a symmetric-key algorithm that uses a 64-bit key to encrypt 64-bit blocks of data. This implementation only accepts 64-bit binary input (strings of 0s and 1s).'}
+                            'Data Encryption Standard (DES) is a symmetric-key algorithm that uses a 64-bit key to encrypt 64-bit blocks of data. This implementation uses a consistent key generation method to ensure proper encryption and decryption.'}
                     </p>
                 </div>
             </div>
