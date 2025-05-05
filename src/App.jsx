@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './App.css';
 
 const API_BASE_URL = 'https://cool-georgeanna-isakoya-c6ce14a1.koyeb.app';
 
