@@ -155,15 +155,14 @@ export default function App() {
         setBruteForceResults(null);
         setError('');
         setKey('');
+        setText('');
     };
 
     const validateDESInput = () => {
         if (activeTab === 'des') {
-            if (
-                text.length !== 8 &&
-                !(text.length === 64 && /^[01]+$/.test(text))
-            ) {
-                setError('Input text must be exactly 8 characters or 64 binary bits.');
+            // Only accept 64-bit binary input
+            if (text.length !== 64 || !/^[01]+$/.test(text)) {
+                setError('Input must be exactly 64 binary bits (0s and 1s only).');
                 return false;
             }
         }
@@ -173,6 +172,7 @@ export default function App() {
         }
         return true;
     };
+
     const handleOperation = (operation) => {
         if (!validateDESInput()) return;
 
@@ -237,11 +237,12 @@ export default function App() {
                             type="text"
                             value={text}
                             onChange={(e) => setText(e.target.value)}
-                            placeholder="Enter 8 characters or 64 binary bits"
+                            placeholder={activeTab === 'des' ? "Enter exactly 64 binary bits (0s and 1s only)" : "Enter text to encrypt/decrypt"}
                         />
                         {activeTab === 'des' && (
                             <span className="input-help">
-                                DES requires exactly 8 characters or 64 binary bits. Current: {text.length} {text.length === 64 && /^[01]+$/.test(text) ? 'bits (valid)' : 'characters'}
+                                DES requires exactly 64 binary bits (0s and 1s only). Current: {text.length} bits
+                                {text.length === 64 && /^[01]+$/.test(text) ? ' (valid)' : ''}
                             </span>
                         )}
                     </div>
@@ -367,7 +368,7 @@ export default function App() {
                         {activeTab === 'mono' &&
                             'Monoalphabetic cipher uses a fixed substitution alphabet where each letter is mapped to another letter. Unlike Caesar cipher, the mapping is not based on a simple shift.'}
                         {activeTab === 'des' &&
-                            'Data Encryption Standard (DES) is a symmetric-key algorithm that uses a 64-bit key to encrypt 64-bit blocks of data. It was widely used for secure communications but is now considered legacy due to its small key size.'}
+                            'Data Encryption Standard (DES) is a symmetric-key algorithm that uses a 64-bit key to encrypt 64-bit blocks of data. This implementation only accepts 64-bit binary input (strings of 0s and 1s).'}
                     </p>
                 </div>
             </div>
